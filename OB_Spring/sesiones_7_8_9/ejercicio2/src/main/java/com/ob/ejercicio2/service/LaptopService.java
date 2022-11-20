@@ -36,38 +36,57 @@ public class LaptopService implements ILaptopService {
         return laptopRepository.findById(id);
     }
 
-    public Boolean existsById(Long id) {
-        return laptopRepository.existsById(id);
-    }
-
     @Override
-    public Laptop create(Laptop laptop) {
+    public Boolean create(Laptop laptop) {
         log.info("REST Request for creating a laptop");
-        Laptop result = null;
-        return laptopRepository.save(laptop);
+        boolean existingLaptop;
+        if (laptop.getId() != null) {
+            log.warn("Trying to create a laptop with id");
+            return true;
+        } else {
+            laptopRepository.save(laptop);
+            return false;
+        }
     }
 
     @Override
-    public Laptop update(Laptop laptop) {
+    public Boolean update(Laptop laptop) {
         log.info("REST Request for updating a laptop");
-        return laptopRepository.save(laptop);
+        boolean existingLaptop;
+        if (laptopRepository.existsById(laptop.getId())) {
+            laptopRepository.save(laptop);
+            return true;
+        } else {
+            log.warn("Trying to update a non existing laptop");
+            return false;
+        }
     }
 
     @Override
-    public void deleteOneById(Long id) {
+    public Boolean deleteOneById(Long id) {
         log.info("REST Request for deletion one laptop by id");
-        laptopRepository.deleteById(id);
-        System.out.println("Laptop with id: " + id + " was deleted succesfully.");
+        boolean found = false;
+        if (laptopRepository.existsById(id)) {
+            laptopRepository.deleteById(id);
+            System.out.println("Laptop with id: " + id + " was deleted succesfully.");
+            found = true;
+        } else {
+            log.warn("There is no device with id: {}", id);
+        }
+        return found;
     }
 
     @Override
-    public void deleteAll() {
+    public Boolean deleteAll() {
+        log.info("REST Request for deletion all devices");
+        boolean empty;
         if (laptopRepository.findAll().isEmpty()) {
             log.warn("There is no laptops for deletion");
+            return true;
         } else {
-            log.info("REST Request for deletion all devices");
             laptopRepository.deleteAll();
             System.out.println("All laptops were deleted successfully.");
+            return false;
         }
     }
 }

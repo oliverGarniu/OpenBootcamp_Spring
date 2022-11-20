@@ -33,7 +33,7 @@ public class SwaggerConfiguration {
         return new ApiInfo(
                 "Laptop API",
                 "List Service Laptops API",
-                "3,0",
+                "3.0",
                 "http://laptop.com/terms",
                 new Contact("Laptop", "https://laptop.com", "contact@laptop.com"),
                 "LICENSE",
